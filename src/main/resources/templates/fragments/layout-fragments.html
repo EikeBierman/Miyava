@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+
+	<!-- Main Header -->
+	<header class="main-header" th:fragment="main-header">
+		<!-- Logo -->
+		<a href="/" th:href="@{/index}" class="logo" id="miyavalogo"> <!-- mini logo for sidebar mini 50x50 pixels -->
+		</a>
+
+		<!-- Header Navbar -->
+		<nav class="navbar navbar-static-top" role="navigation">
+			<!-- Sidebar toggle button-->
+			<a href="#" class="sidebar-toggle" data-toggle="offcanvas"
+				role="button"> <span class="sr-only">Toggle navigation</span>
+			</a>
+			<!-- Navbar Right Menu -->
+			<div class="navbar-custom-menu">
+				<ul class="nav navbar-nav">
+
+					<!-- User Account Menu -->
+					<li class="dropdown user user-menu">
+						<!-- Menu Toggle Button --> <a href="#" class="dropdown-toggle"
+						data-toggle="dropdown"> <span class="hidden-xs"
+							th:text="${currentUser.firstname} + ' ' + ${currentUser.lastname}"></span>
+					</a>
+						<ul class="dropdown-menu">
+							<li class="user-header">
+								<p>
+									<span class="hidden-xs" th:text="${currentUser.firstname} + ' ' + ${currentUser.lastname}">Vorname Nachname</span> - <span class="hidden-xs" th:text="${currentUser.userRoles}">Role</span> 
+									
+									<small>Member since <span class="hidden-xs" th:text="${#dates.format(currentUser.createdDate, 'dd.MM.YYYY')}">Member seit</span></small>
+								</p>
+							</li>
+							<!-- Menu Footer-->
+							<li class="user-footer">
+								<div class="pull-left">
+									<a href="#" class="btn btn-default btn-flat">Profile</a>
+								</div>
+								<div class="pull-right">
+									<form th:action="@{/logout}" method="post">
+										<input type="submit" class="btn btn-default btn-flat"
+											value="Sign Out" />
+									</form>
+
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div>
+		</nav>
+	</header>
+
+
+	<!-- Left side column. contains the logo and sidebar -->
+	<aside class="main-sidebar" th:fragment="main-sidebar">
+
+		<!-- sidebar: style can be found in sidebar.less -->
+		<section class="sidebar">
+
+			<!-- search form (Optional) -->
+			<form action="#" method="get" class="sidebar-form">
+				<div class="input-group">
+					<input type="text" name="q" class="form-control"
+						placeholder="Search..."> <span class="input-group-btn">
+						<button type="submit" name="search" id="search-btn"
+							class="btn btn-flat">
+							<i class="fa fa-search"></i>
+						</button>
+					</span>
+				</div>
+			</form>
+			<!-- /.search form -->
+
+			<!-- Sidebar Menu -->
+			<ul class="sidebar-menu">
+				<li class="header" th:text="#{common.menu.header}">MAIN MENUE</li>
+				<!-- Optionally, you can add icons to the links -->
+				<li class=""><a href="#" th:href="@{/index}"><i
+						class="fa fa-dashboard"></i> <span
+						th:text="#{common.menu.home}">Home</span></a></li>
+				<li class=""><a href="#" th:href="@{/movies}"><i
+						class="fa fa-film"></i> <span
+						th:text="#{common.menu.movie}">Movie</span></a></li>
+				<li class="treeview active"><a
+					href="#"><i class="fa fa-gears"></i><span
+						th:text="#{common.menu.statistic}">Statistik</span> <i
+						class="fa fa-angle-left pull-right"></i></a>
+					<ul class="treeview-menu">
+						<li class="active">
+							<a href="#" th:href="@{/statistic/movie}" th:text="#{common.menu.statistic.movie}">Movie Statistic</a>
+						</li>
+					</ul>
+				</li>
+				
+				<!-- Stammdaten -->
+				<li sec:authorize="hasRole('ROLE_ADMIN')" class="treeview active"><a
+					href="#"><i class="fa fa-gears"></i><span
+						th:text="#{common.menu.masterdata}">Master Data</span> <i
+						class="fa fa-angle-left pull-right"></i></a>
+					<ul class="treeview-menu">
+						<li class="active"><a href="#" th:href="@{/user}"
+							th:text="#{common.menu.user}">Benutzerverwaltung</a></li>
+						<li class="active"><a href="#" th:href="@{/genres}"
+							th:text="#{common.menu.genre}">Genreverwaltung</a></li>
+						<li class="active"><a href="#" th:href="@{/movie}"
+							th:text="#{common.menu.movie}">Movieverwaltung</a></li>
+						<li class="active"><a href="#" th:href="@{/serie}"
+							th:text="#{common.menu.serie}">Serieverwaltung</a></li>
+					</ul></li>
+			</ul>
+			<!-- /.sidebar-menu -->
+		</section>
+		<!-- /.sidebar -->
+	</aside>
+
+	<!-- Main Footer -->
+	<footer class="main-footer" th:fragment="main-footer">
+		<strong>Copyright &copy; <span
+			th:text="${#dates.year(#dates.createNow())}">2016</span> <span
+			id="company_name" th:text="#{infos.company_name}"></span>
+		</strong> <span th:text="#{infos.rechte_vorbehalten}">All rights
+			reserved.</span>
+	</footer>
+
+	<th:block th:fragment="breadcrumb">
+		<ol class="breadcrumb">
+			<th:block th:each="item, itemStat : ${breadcrumbs}">
+				<li class="" th:classappend="${itemStat.last}? 'active'"><a
+					href="#" th:href="@{${item.link}}"><i th:if="${item.icon}"
+						class="fa" th:classappend="${item.icon}"></i> <th:block
+							th:text="#{${item.linktext}}"> Level</th:block></a></li>
+			</th:block>
+		</ol>
+	</th:block>
+
+</body>
+</html>

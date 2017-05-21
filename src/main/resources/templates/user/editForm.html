@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:th="http://www.thymeleaf.org" layout:decorator="layout/main-decorator">
+<head>
+<title th:text="#{user.page.edit.title}">Benutzer bearbeiten</title>
+</head>
+<body>
+
+    <div layout:fragment="main-content">
+        <section class="content-header">
+            <h1 th:text="#{user.page.edit.title}">Benutzer bearbeiten</h1>
+            <div th:replace="fragments/layout-fragments::breadcrumb" ></div>
+        </section>
+
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="nav-tabs-custom" th:if="${user}">
+                        <ul class="nav nav-tabs">
+                            <li class=""><a href="#mainTab" data-toggle="tab"
+                                th:attr="data-tab-url=@{'/user/' + ${user.id} +'/maintab'}"
+                                th:text="#{user.page.edit.tab.main}" data-tab-always-refresh="true">Main</a>
+                            </li>
+                            <li class=""><a href="#passwordTab" data-toggle="tab"
+                                th:text="#{user.page.edit.tab.password}"
+                                th:attr="data-tab-url=@{'/user/' + ${user.id} +'/passwordtab'}"
+                                data-tab-always-refresh="true">Password</a></li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade" id="mainTab"></div>
+                            <div class="tab-pane fade" id="passwordTab"></div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning" th:unless="${user}"
+                        th:text="#{common.message.data_not_found}">No data found</div>
+                    <a href="#" th:href="@{/user}" th:text="#{common.button.back}"
+                        th:unless="${user}" class="btn btn-default">Go back</a>
+                </div>
+            </div>
+        </section>
+    </div>
+
+
+    <div layout:fragment="decorator-sub-page-js" th:remove="tag">
+        <script src="../../plugins/remote-data/bootstrap-remote-tabs.min.js"
+            th:src="@{/plugins/remote-data/bootstrap-remote-tabs.min.js}"></script>
+    </div>
+
+    <div layout:fragment="header-css-extra" th:remove="tag"></div>
+
+</body>
+</html>

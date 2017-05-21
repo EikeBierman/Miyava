@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="layout/layout-decorator">
+<head>
+</head>
+<body>
+    <div th:fragment="fields">
+        <div class="form-group">
+            <label class="col-sm-2 control-label" th:text="#{common.field.createdBy}">Created
+                By</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" th:field="*{createdBy}"
+                    disabled="disabled" /> <input type="hidden" th:field="*{createdBy}" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label" th:text="#{common.field.createdDate}">Created
+                Date</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" th:field="*{createdDate}"
+                    disabled="disabled" /> <input type="hidden" th:field="*{createdDate}"
+                    th:if="*{createdDate}" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label"
+                th:text="#{common.field.lastModifiedBy}">Last Modified By</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" th:field="*{lastModifiedBy}"
+                    disabled="disabled" />
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label class="col-sm-2 control-label"
+                th:text="#{common.field.lastModifiedDate}">Last Modified Date</label>
+            <div class="col-sm-10">
+                <input class="form-control" type="text" th:field="*{lastModifiedDate}"
+                    disabled="disabled" />
+            </div>
+        </div>
+    </div>
+</body>

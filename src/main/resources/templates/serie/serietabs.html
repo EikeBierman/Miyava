@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+</head>
+<body>
+	<div th:fragment="maintab">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">&nbsp;</h3>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form action="#" th:action="@{'/serie/' + ${serie.id} + '/update'}"
+                th:object="${serie}" method="post"
+                class="form-horizontal form-custom ajax-form" novalidate="novalidate">
+                <div class="box-body">
+                    <div class="form-group"
+                        th:classappend="${#fields.hasErrors('*{name}')}? 'has-error'">
+                        <label class="col-sm-2 control-label" th:text="#{serie.field.name}">name</label>
+                        <div class="col-sm-10">
+                            <input class="form-control" type="text" th:field="*{name}"
+                                placeholder="Name" th:placeholder="#{serie.field.name}"
+                                th:attr="data-msg-required=#{serie.messages.name_empty}"
+                                data-msg-required="Please enter a name" data-rule-required="true" />
+                            <span class="help-block" for="name"
+                                th:if="${#fields.hasErrors('*{name}')}" th:errors="*{name}">
+                                <i class="fa fa-warning"></i> Incorrect name
+                            </span>
+                        </div>
+                    </div>
+                    <div th:replace="fragments/audit::fields" ></div>
+                </div>
+                <!-- /.box-body -->
+                <div class="box-footer">
+                    <button type="submit" class="btn btn-info pull-right"
+                        th:text="#{common.button.save}">Save</button>
+                </div>
+                <!-- /.box-footer -->
+            </form>
+        </div>
+    </div>
+    
+    <div th:fragment="listtab">
+        <div class="box box-info">
+            <div class="box-header with-border">
+                <h3 class="box-title">&nbsp;</h3>
+            </div>
+            <div th:replace="serie/list::fields" ></div>
+        </div>
+    </div>
+</body>
+</html>

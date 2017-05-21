@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+    xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorator="layout/layout-decorator">
+<head>
+</head>
+<body>
+
+    <div th:fragment="message-fragment">
+        <script type="text/javascript" th:if="${message != null}"
+            th:inline="javascript">
+            $().toastmessage('showToast', {
+                text : /*[[#{${message.message}}]]*/'Event Message',
+                type : /*[[${#strings.toLowerCase(message.type)}]]*/'error'
+            });
+        </script>
+    </div>
+
+</body>
+</html>

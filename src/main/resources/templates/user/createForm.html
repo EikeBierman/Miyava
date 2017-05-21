@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    xmlns:th="http://www.thymeleaf.org" layout:decorator="layout/main-decorator">
+<head>
+<title th:text="#{user.page.create.title}">Neuen Benutzer anlegen</title>
+</head>
+<body>
+
+
+    <div layout:fragment="main-content">
+        <section class="content-header">
+            <h1 th:text="#{user.page.create.title}">Neuen Benutzer anlegen</h1>
+            <div th:replace="fragments/layout-fragments::breadcrumb"></div>
+        </section>
+
+        <section class="content">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="box box-info">
+                        <div class="box-header with-border">
+                            <h3 class="box-title">&nbsp;</h3>
+                        </div>
+                        <!-- /.box-header -->
+                        <!-- form start -->
+                        <form class="form-horizontal form-custom" action="#"
+                            th:action="@{'/user/create'}" th:object="${user}" method="post"
+                            novalidate="novalidate">
+                            <div class="box-body">
+                                <div class="form-group"
+                                    th:classappend="${#fields.hasErrors('*{email}')}? 'has-error'">
+                                    <label class="col-sm-2 control-label" th:text="#{user.field.email}">Email</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text" th:field="*{email}"
+                                            placeholder="Email" th:placeholder="#{user.field.email}"
+                                            th:attr="data-msg-required=#{user.messages.email_empty}, data-msg-email=#{user.messages.email_wrong_format}"
+                                            data-rule-email="true"
+                                            data-msg-email="Email is not a valif email address"
+                                            data-msg-required="Please enter a email" data-rule-required="true" />
+                                        <span class="help-block" for="email"
+                                            th:if="${#fields.hasErrors('*{email}')}" th:errors="*{email}">
+                                            <i class="fa fa-warning"></i> Incorrect email
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group"
+                                    th:classappend="${#fields.hasErrors('*{username}')}? 'has-error'">
+                                    <label class="col-sm-2 control-label" th:text="#{user.field.username}">Username</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text" th:field="*{username}"
+                                            placeholder="Username" th:placeholder="#{user.field.username}"
+                                            data-msg-required="Please enter a username" data-rule-required="true" />
+                                        <span class="help-block" for="username"
+                                            th:if="${#fields.hasErrors('*{username}')}" th:errors="*{username}">
+                                            <i class="fa fa-warning"></i> Incorrect username
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group"
+                                    th:classappend="${#fields.hasErrors('*{firstname}')}? 'has-error'">
+                                    <label class="col-sm-2 control-label" th:text="#{user.field.firstname}">Firstname</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text" th:field="*{firstname}"
+                                            placeholder="Firstname" th:placeholder="#{user.field.firstname}"
+                                            th:attr="data-msg-required=#{user.messages.firstname_empty}"
+                                            data-msg-required="Please enter a firstname"
+                                            data-rule-required="true" /> <span class="help-block" for="username"
+                                            th:if="${#fields.hasErrors('*{firstname}')}" th:errors="*{firstname}">
+                                            <i class="fa fa-warning"></i> Incorrect firstname
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group"
+                                    th:classappend="${#fields.hasErrors('*{lastname}')}? 'has-error'">
+                                    <label class="col-sm-2 control-label" th:text="#{user.field.lastname}">Lastname</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="text" th:field="*{lastname}"
+                                            placeholder="Lastname" th:placeholder="#{user.field.lastname}"
+                                            th:attr="data-msg-required=#{user.messages.lastname_empty}"
+                                            data-msg-required="Please enter a lastname" data-rule-required="true" />
+                                        <span class="help-block" for="username"
+                                            th:if="${#fields.hasErrors('*{lastname}')}" th:errors="*{lastname}">
+                                            <i class="fa fa-warning"></i> Incorrect laststname
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group"
+                                    th:classappend="${#fields.hasErrors('*{password}')}? 'has-error'">
+                                    <label class="col-sm-2 control-label" th:text="#{user.field.password}">Password</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="password" th:field="*{password}"
+                                            placeholder="Password" th:placeholder="#{user.field.password}"
+                                            th:attr="data-msg-required=#{user.messages.password_empty}, data-msg-minlength=#{user.messages.password_minlength}, data-rule-minlength=${passwordMinlength}"
+                                            data-msg-required="Please enter a password" data-rule-required="true"
+                                            data-rule-minlength="6"
+                                            data-msg-minlength="Password lenght is incorrect" /> <span
+                                            class="help-block" for="password"
+                                            th:if="${#fields.hasErrors('*{password}')}" th:errors="*{password}">
+                                            <i class="fa fa-warning"></i> Incorrect password
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group"
+                                    th:classappend="${#fields.hasErrors('*{passwordConfirm}')}? 'has-error'">
+                                    <label class="col-sm-2 control-label"
+                                        th:text="#{user.field.passwordConfirm}">Password confirmation</label>
+                                    <div class="col-sm-10">
+                                        <input class="form-control" type="password"
+                                            placeholder="Password confirmation"
+                                            th:placeholder="#{user.field.passwordConfirm}"
+                                            th:field="*{passwordConfirm}" data-rule-required="true"
+                                            data-msg-required="Please verify the password"
+                                            data-rule-equalTo="#password"
+                                            data-msg-equalTo="The passwords do not match"
+                                            th:attr="data-msg-required=#{user.messages.password_confirmation_empty}, data-msg-minlength=#{user.messages.password_minlength}, data-msg-equalTo=#{user.messages.passwords_dont_match}" />
+                                        <span class="help-block" for="passwordConfirm"
+                                            th:if="${#fields.hasErrors('*{passwordConfirm}')}"
+                                            th:errors="*{passwordConfirm}"> <i class="fa fa-warning"></i>
+                                            Incorrect password
+                                        </span>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-2 control-label" th:text="#{common.field.enabled}">Aktiviert</label>
+                                    <div class="col-sm-10">
+                                        <div class="checkbox">
+                                            <input type="checkbox" th:field="*{enabled}" />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group"
+                                    th:classappend="${#fields.hasErrors('*{userRoles}')}? 'has-error'">
+                                    <label class="col-sm-2 control-label" th:text="#{user.field.role}">Rollen</label>
+                                    <div class="col-sm-10">
+                                        <select class="form-control asd" th:field="*{userRoles}"
+                                            data-rule-required="true" data-msg-required="Please select a role"
+                                            th:attr="data-msg-required=#{user.messages.role_empty}">
+                                            <option value="" th:text="#{common.actions.choose_one}">please
+                                                select</option>
+                                            <option th:each="role : ${T(com.miyava.user.model.Role).values()}"
+                                                th:value="${role}" th:text="${role}"></option>
+                                        </select> <span class="help-block" for="userRoles"
+                                            th:if="${#fields.hasErrors('*{userRoles}')}" th:errors="*{userRoles}">
+                                            <i class="fa fa-warning"></i> Select a role
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- /.box-body -->
+                            <div class="box-footer">
+                                <a href="#" th:href="@{/user}" th:text="#{common.button.cancel}"
+                                    class="btn btn-default">Go back</a>
+                                <button type="submit" class="btn btn-info pull-right"
+                                    th:text="#{common.button.save}">Save</button>
+                            </div>
+                            <!-- /.box-footer -->
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+
+    <div layout:fragment="decorator-sub-page-js" th:remove="tag"></div>
+
+    <div layout:fragment="header-css-extra" th:remove="tag"></div>
+
+</body>
+</html>

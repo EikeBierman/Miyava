@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/main-decorator"
+	xmlns:sec="http://www.thymeleaf.org/extras/dialect">
+<head>
+<title th:text="#{Index.page.title}">Dashboard</title>
+</head>
+<body>
+
+	<div layout:fragment="main-content">
+		<section class="content-header">
+			<h1 th:text="#{Index.page.title}">Index</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-dashboard"></i> Level</a></li>
+				<li class="active">Here</li>
+			</ol>
+		</section>
+
+		<!-- Main content -->
+		<section class="content">
+			Roles: <span sec:authentication="principal.authorities">[ROLE_USER,
+				ROLE_ADMIN]</span>
+			<div sec:authentication="name">The value of the "name" property
+				of the authentication object should appear here.</div>
+
+			<div sec:authorize="hasRole('ROLE_USER')">This will only be
+				displayed if authenticated user has role ROLE_USER.</div>
+
+			<div sec:authorize="hasRole('ROLE_ADMIN')">This will only be
+				displayed if authenticated user has role ROLE_ADMIN.</div>
+
+		</section>
+		<!-- /.content -->
+	</div>
+	<div layout:fragment="decorator-page-js" th:remove="tag"></div>
+
+	<div layout:fragment="header-css-extra" th:remove="tag"></div>
+
+</body>
+</html>

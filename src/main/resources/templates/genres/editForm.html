@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  xmlns:th="http://www.thymeleaf.org"
+  layout:decorator="layout/main-decorator">
+<head>
+<title th:text="#{genre.page.edit.title}">Genre bearbeiten</title>
+</head>
+<body>
+
+  <div layout:fragment="main-content">
+    <section class="content-header">
+      <h1 th:text="#{genre.page.edit.title}">Genre bearbeiten</h1>
+      <div th:replace="fragments/layout-fragments::breadcrumb"></div>
+    </section>
+
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box box-info">
+            <div class="box-header with-border">
+              <h3 class="box-title">&nbsp;</h3>
+              <div class="btn-group pull-right">
+                <button type="button" class="btn btn-info"
+                  th:text="#{common.button.actions}">Actions</button>
+                <button type="button" class="btn btn-info dropdown-toggle"
+                  data-toggle="dropdown">
+                  <span class="caret"></span> <span class="sr-only"
+                    th:text="#{common.button.toggle_dropdown}">Toggle
+                    Dropdown</span>
+                </button>
+                <ul class="dropdown-menu" role="menu">
+                  <li><a href="#" th:href="@{/genre/new}"
+                    th:text="#{genre.button.create}">Erstelle eine Gerne</a></li>
+                  <li><a href="#"
+                    th:href="@{'/genre/' + ${genre.id} + '/delete'}"
+                    th:text="#{genre.button.delete}">Lösche eine Gerne</a></li>
+                </ul>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <!-- form start -->
+            <form class="form-horizontal form-custom" action="#"
+              th:action="@{'/genre/' + ${genre.id} + '/update'}"
+              th:object="${genre}" method="post" novalidate="novalidate">
+              <div class="box-body">
+                <div class="form-group"
+                  th:classappend="${#fields.hasErrors('*{name}')}? 'has-error'">
+                  <label class="col-sm-2 control-label"
+                    th:text="#{genre.field.name}">Genre</label>
+                  <div class="col-sm-10">
+                    <input class="form-control" type="text" th:field="*{name}"
+                      placeholder="Genre" th:placeholder="#{genre.field.name}"
+                      th:attr="data-msg-required=#{mimetype.messages.mimetype_empty}"
+                      data-msg-required="Please enter a genre"
+                      data-rule-required="true" /> <span class="help-block"
+                      for="genre" th:if="${#fields.hasErrors('*{name}')}"
+                      th:errors="*{name}"> <i class="fa fa-warning"></i>
+                      Incorrect genre
+                    </span>
+                  </div>
+                </div>
+                <div th:replace="fragments/audit::fields"></div>
+              </div>
+              <!-- /.box-body -->
+              <div class="box-footer">
+                <a href="#" th:href="@{/genre}"
+                  th:text="#{common.button.cancel}" class="btn btn-default">Go
+                  back</a>
+                <button type="submit" class="btn btn-info pull-right"
+                  th:text="#{common.button.save}">Save</button>
+              </div>
+              <!-- /.box-footer -->
+            </form>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+
+  <div layout:fragment="decorator-sub-page-js" th:remove="tag"></div>
+
+  <div layout:fragment="header-css-extra" th:remove="tag"></div>
+
+
+</body>
+</html>

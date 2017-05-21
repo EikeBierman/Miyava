@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  xmlns:th="http://www.thymeleaf.org"
+  layout:decorator="layout/main-decorator">
+<head>
+<title th:text="#{movie.page.list.title}">Movieverwaltung</title>
+</head>
+<body>
+
+  <div layout:fragment="main-content">
+    <section class="content-header">
+      <h1 th:text="#{movie.page.list.title}">Movieverwaltung</h1>
+      <div th:replace="fragments/layout-fragments::breadcrumb"></div>
+    </section>
+
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title" th:text="#{movie.page.list.form}">Movieverwaltung</h3>
+              <div class="btn-group pull-right">
+                <a type="button" style="color: white" class="btn btn-info"
+                  href="#" th:href="@{/movie/new}"
+                  th:text="#{movie.button.create}">Create New Movie</a>
+              </div>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+
+  <div layout:fragment="decorator-sub-page-js" th:remove="tag">
+    <!-- DataTables -->
+    <script src="../../plugins/datatables/jquery.dataTables.min.js"
+      th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+    <script src="../../plugins/datatables/dataTables.bootstrap.min.js"
+      th:src="@{/plugins/datatables/dataTables.bootstrap.min.js}"></script>
+    <script src="../../js/pages/movie.js" th:src="@{/js/pages/movie.js}"></script>
+  </div>
+
+  <div layout:fragment="header-css-extra" th:remove="tag">
+    <!-- DataTables -->
+    <link rel="stylesheet"
+      href="../../plugins/datatables/dataTables.bootstrap.css"
+      th:href="@{/plugins/datatables/dataTables.bootstrap.css}">
+
+  </div>
+
+
+</body>
+</html>

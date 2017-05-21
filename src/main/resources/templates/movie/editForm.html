@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  xmlns:th="http://www.thymeleaf.org"
+  layout:decorator="layout/main-decorator">
+<head>
+<title th:text="#{movie.page.list.title}">movieverwaltung</title>
+</head>
+<body>
+
+  <div layout:fragment="main-content">
+    <section class="content-header">
+      <h1 th:text="#{movie.page.list.title}">movieverwaltung</h1>
+      <div th:replace="fragments/layout-fragments::breadcrumb"></div>
+    </section>
+
+    <section class="content">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="box">
+            <div class="box-header">
+              <h3 class="box-title" th:text="#{movie.page.list.form}">movieverwaltung</h3>
+            </div>
+            <!-- /.box-header -->
+            <div class="box-body">
+            
+            	<div class="nav-tabs-custom" th:if="${movie}">
+                        <ul class="nav nav-tabs">
+                            <li class=""><a href="#mainTab" data-toggle="tab"
+                                th:attr="data-tab-url=@{'/movie/' + ${movie.id} +'/maintab'}"
+                                th:text="#{movie.page.edit.tab.main}" data-tab-always-refresh="true">Main</a>
+                            </li>
+                            <li class=""><a href="#descriptiontab" data-toggle="tab"
+                                th:attr="data-tab-url=@{'/movie/' + ${movie.id} +'/descriptiontab'}"
+                                th:text="#{movie.page.edit.tab.description}" data-tab-always-refresh="true">Beschreibung</a>
+                            </li>
+                        </ul>
+                        <div class="tab-content">
+                            <div class="tab-pane fade" id="mainTab"></div>
+                            <div class="tab-pane fade" id="descriptiontab"></div>
+                        </div>
+                    </div>
+
+                    <div class="alert alert-warning" th:unless="${movie}"
+                        th:text="#{common.message.data_not_found}">No data found</div>
+                    <a href="#" th:href="@{/movie}" th:text="#{common.button.back}"
+                        th:unless="${movie}" class="btn btn-default">Go back</a>
+            	
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+
+
+  <div layout:fragment="decorator-sub-page-js" th:remove="tag">
+    <!-- DataTables -->
+    <script src="../../plugins/datatables/jquery.dataTables.min.js"
+      th:src="@{/plugins/datatables/jquery.dataTables.min.js}"></script>
+    <script src="../../plugins/datatables/dataTables.bootstrap.min.js"
+      th:src="@{/plugins/datatables/dataTables.bootstrap.min.js}"></script>
+    <script src="../../js/pages/movie.js" th:src="@{/js/pages/movie.js}"></script>
+    <script src="../../plugins/remote-data/bootstrap-remote-tabs.min.js"
+            th:src="@{/plugins/remote-data/bootstrap-remote-tabs.min.js}"></script>
+  </div>
+
+  <div layout:fragment="header-css-extra" th:remove="tag">
+    <!-- DataTables -->
+    <link rel="stylesheet"
+      href="../../plugins/datatables/dataTables.bootstrap.css"
+      th:href="@{/plugins/datatables/dataTables.bootstrap.css}">
+
+  </div>
+
+
+</body>
+</html>
