@@ -21,39 +21,33 @@
 			<div class="row">
 				<div th:each="movie : ${movies}" class="col-md-6">
 					<div class="panel panel-default">
-						<div th:each="movieUser : ${movieUserWatched}">
-							<div th:if="${movie.id} == ${movieUser.id}"
-								class="panel-heading box box-success">
-								<h4>
-									<i style="float: left; color: green; margin-right: 1%;"
-										class="fa fa-check-circle"> </i> <span class="info-box-number"
-										th:text="${movie.title}">MovieName</span>
-								</h4>
-							</div>
-							<div th:unless="${movie.id} == ${movieUser.id}"
-								class="panel-heading box box-danger">
-								<h4>
-									<span class="info-box-number" th:text="${movie.title}">MovieName</span>
-								</h4>
-							</div>
+						<div style="margin: 0 !important;"
+							th:if="${#lists.contains(movieUserWatched, movie)}"
+							class="panel-heading box box-success">
+							<h4>
+								<i style="float: left; color: green; margin-right: 2%;"
+									class="fa fa-check-circle"> </i> <span class="info-box-number"
+									th:text="${movie.title}">MovieName</span>
+							</h4>
+						</div>
+						<div style="margin: 0 !important;"
+							th:unless="${#lists.contains(movieUserWatched, movie)}"
+							class="panel-heading box box-danger">
+							<h4>
+								<span class="info-box-number" th:text="${movie.title}">MovieName</span>
+							</h4>
 						</div>
 						<div class="panel-body">
-							<div class="col-md-5"
-								style="margin-left: -5.9%; margin-bottom: -3%; margin-top: -6.4%;">
-								<img style="opacity: 1;" data-sizes="auto"
-									th:alt="${movie.title}" th:src="@{${movie.poster_path}}">
+							<div class="col-md-5">
+								<img
+									style="margin-left: -16%; margin-bottom: -8%; opacity: 1; margin-top: -8%;"
+									data-sizes="auto" th:alt="${movie.title}"
+									th:src="@{${movie.poster_path}}">
 							</div>
-							<div class="col-md-7"
-								style="margin-left: -3.5%; margin-bottom: -3%; width: 67.7%; margin-top: -6.4%; margin-right: 0%; padding-top: 2%;">
-								<i class="fa fa-calendar" style="float:left; margin-right:1%;"> </i> 
-								<span th:text="${movie.release_date}"></span><br>
-								<span th:text="${genre}"></span><br><br>
-								<span th:text="${movie.overview}"></span>
-								
-							</div>
+							<div class="col-md-7">Genre Infos</div>
 						</div>
 						<div class="panel-footer">
-							<a href="#" th:href="@{'/movies/' + ${movie.id} }"
+							<a href="#" th:href="@{'/movie/' + ${movie.id} }"
 								class="small-box-footer">More info <i
 								class="fa fa-arrow-circle-right"></i></a>
 						</div>
@@ -67,6 +61,5 @@
 	<div layout:fragment="decorator-page-js" th:remove="tag"></div>
 
 	<div layout:fragment="header-css-extra" th:remove="tag"></div>
-
 </body>
 </html>

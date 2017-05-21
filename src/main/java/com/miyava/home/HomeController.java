@@ -72,6 +72,7 @@ public class HomeController
         model.addAttribute( "genre", genreName );
         model.addAttribute( "movies", movie );
         model.addAttribute( "movieUserWatched", movieUserWatched );
+        model.addAttribute( "userWatched", UserWatched );
 
         return "home/movies";
     }
@@ -86,7 +87,7 @@ public class HomeController
             genre += "" + g.getName() + ", ";
         }
 
-        if(genre.length() > 0){
+        if ( genre.length() > 0 ) {
             genre = genre.substring( 0, genre.length() - 1 );
         }
         model.addAttribute( "movie", movie );

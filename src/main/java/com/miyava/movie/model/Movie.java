@@ -44,13 +44,13 @@ public class Movie
     @Length( max = 255, message = "common.message.data_to_long" )
     @JsonView( DataTablesOutput.View.class )
     private String poster_path;
-    
+
     @NotEmpty( message = "movie.messages.movie_empty" )
     @Column( nullable = false, unique = false, length = 255 )
     @Length( max = 255, message = "common.message.data_to_long" )
     @JsonView( DataTablesOutput.View.class )
     private String runtime;
-    
+
     @NotEmpty( message = "movie.messages.movie_empty" )
     @Column( nullable = false, unique = false, length = 255 )
     @Length( max = 255, message = "common.message.data_to_long" )
@@ -103,7 +103,7 @@ public class Movie
     public void setOverview( String overview ) {
         this.overview = overview;
     }
-    
+
     public String getPoster_path() {
         return poster_path;
     }
