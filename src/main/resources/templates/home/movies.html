@@ -44,7 +44,22 @@
 									data-sizes="auto" th:alt="${movie.title}"
 									th:src="@{${movie.poster_path}}">
 							</div>
-							<div class="col-md-7">Genre Infos</div>
+							<div class="col-md-7">
+								<div class="col-md-7 col-md-offset-7">
+									Daumen 
+								</div>
+								<div class="clearfix"></div>
+								<div>
+									<i class="glyphicon glyphicon-calendar" style="float:left;"></i>
+									<span th:text="${movie.release_date}">Release_date</span>
+									<span th:text="${genre}">Genres</span>
+								</div>
+								<div>
+									<h6>Handlung</h6>
+									<hr>
+									<span th:text="${movie.overview}">Handlung</span>
+								</div>
+							</div>
 						</div>
 						<div class="panel-footer">
 							<a href="#" th:href="@{'/movies/' + ${movie.id} }"

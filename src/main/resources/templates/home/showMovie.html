@@ -19,17 +19,20 @@
 
 		<div class="container-fluid">
 			<div class="row">
-				<div class="col-md-2">
+				<div class="col-xs-6 col-md-3">
 					<img style="opacity: 1;" data-sizes="auto" th:alt="${movie.title}"
 						th:src="@{${movie.poster_path}}">
 				</div>
-				<div class="col-md-10">
+				<div class="col-xs-12 col-sm-6 col-md-9">
 					<small th:text="${genre}"></small>
 					<h6>
 						<span class="info-box-number">Handlung</span>
 					</h6>
 					<p th:text="${movie.overview}"></p>
 				</div>
+			</div>
+			<div class="row">
+				<div class="clearfix"></div>
 				<div class="col-md-12">
 					<!-- Custom Tabs -->
 					<div class="nav-tabs-custom">
