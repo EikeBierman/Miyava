@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/main-decorator"
+	xmlns:sec="http://www.thymeleaf.org/extras/dialect">
+<head>
+<title th:text="#{movie.page.title}">Movie</title>
+</head>
+<body>
+
+	<div layout:fragment="main-content">
+		<section class="content-header" style="margin-bottom: 2%;">
+			<h1 th:text="#{movie.page.title}">Entdecke neue Filme und Serien</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-dashboard"></i> Filme</a></li>
+				<li class="active">Liste</li>
+			</ol>
+		</section>
+
+		<div class="container">
+			<div class="row">
+				<div th:each="movie : ${movies}" class="col-md-6">
+					<div class="panel panel-default">
+						<div style="margin: 0 !important;"
+							th:if="${#lists.contains(movieUserWatched, movie)}"
+							class="panel-heading box box-success">
+							<h4>
+								<i style="float: left; color: green; margin-right: 2%;"
+									class="fa fa-check-circle"> </i> <span class="info-box-number"
+									th:text="${movie.title}">MovieName</span>
+							</h4>
+						</div>
+						<div style="margin: 0 !important;"
+							th:unless="${#lists.contains(movieUserWatched, movie)}"
+							class="panel-heading box box-danger">
+							<h4>
+								<span class="info-box-number" th:text="${movie.title}">MovieName</span>
+							</h4>
+						</div>
+						<div class="panel-body">
+							<div class="col-md-5">
+								<img
+									style="margin-left: -16%; margin-bottom: -8%; opacity: 1; margin-top: -8%;"
+									data-sizes="auto" th:alt="${movie.title}"
+									th:src="@{${movie.poster_path}}">
+							</div>
+							<div class="col-md-7">
+								<div class="col-md-7 col-md-offset-7">
+									Daumen 
+								</div>
+								<div class="clearfix"></div>
+								<div>
+									<i class="glyphicon glyphicon-calendar" style="float:left;"></i>
+									<span th:text="${movie.release_date}">Release_date</span>
+									<span th:text="${genre}">Genres</span>
+								</div>
+								<div>
+									<h6>Handlung</h6>
+									<hr>
+									<span th:text="${movie.overview}">Handlung</span>
+								</div>
+							</div>
+						</div>
+						<div class="panel-footer">
+							<a href="#" th:href="@{'/movies/' + ${movie.id} }"
+								class="small-box-footer">More info <i
+								class="fa fa-arrow-circle-right"></i></a>
+						</div>
+					</div>
+					<!-- /.box -->
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div layout:fragment="decorator-page-js" th:remove="tag"></div>
+
+	<div layout:fragment="header-css-extra" th:remove="tag"></div>
+</body>
+</html>

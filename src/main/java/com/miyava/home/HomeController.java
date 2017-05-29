@@ -1,15 +1,28 @@
 package com.miyava.home;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceUtils;
+
+import java.util.List;
+
+import javax.sql.DataSource;
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import com.miyava.common.AbstractController;
 import com.miyava.genres.model.Genres;
@@ -28,6 +41,9 @@ public class HomeController
     protected final static String BASE_URL = "/";
 
     @Autowired
+    private DataSource dataSource;
+
+    @Autowired
     private UserDao userDao;
 
     @Autowired
@@ -43,6 +59,14 @@ public class HomeController
     @RequestMapping( value = { BASE_URL, "home" } )
     public String home( Model model ) {
         return "home/home";
+    }
+
+    public void setDataSource( DataSource dataSource ) {
+        this.dataSource = dataSource;
+    }
+
+    public Connection getConnection() {
+        return DataSourceUtils.getConnection( dataSource );
     }
 
     @RequestMapping( value = ( "/movies" ) )
@@ -72,7 +96,7 @@ public class HomeController
         model.addAttribute( "genre", genreName );
         model.addAttribute( "movies", movie );
         model.addAttribute( "movieUserWatched", movieUserWatched );
-        model.addAttribute( "userWatched", UserWatched );
+        // model.addAttribute( "userWatched", UserWatched );
 
         return "home/movies";
     }
@@ -94,6 +118,47 @@ public class HomeController
         model.addAttribute( "genre", genre );
 
         return "home/showMovie";
+    }
+
+    @RequestMapping( value = ( "/search" ) )
+    public String search( @RequestParam( value = "search", required = true ) String search, Model model ) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userDao.findOneByUsername( auth.getName() );
+
+        Connection conn = getConnection();
+        String searchTerm = "'%" + search + "%'";
+        String sql =
+            "SELECT * FROM movie WHERE title LIKE " + searchTerm;
+        List<Movie> movies = new ArrayList<Movie>();
+
+        Statement stmt = null;
+        try {
+            stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery( sql );
+            while ( rs.next() ) {
+                movies.add( movieDao.findOne( rs.getLong(
+                    "movie_id" ) ) );
+            }
+            rs.close();
+            stmt.close();
+        }
+        catch ( SQLException e ) {
+            e.printStackTrace();
+        }
+
+        List<UserMovie> UserWatched = currentUser.getUserMovies();
+
+        List<Movie> movieUserWatched = new ArrayList<Movie>();
+
+        for ( UserMovie u : UserWatched ) {
+            movieUserWatched.add( u.getMovie() );
+        }
+
+        model.addAttribute( "movies", movies );
+        model.addAttribute( "movieUserWatched", movieUserWatched );
+
+        return "home/search";
     }
 
     @RequestMapping( value = ( "/index" ) )
