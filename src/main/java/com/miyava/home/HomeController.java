@@ -93,6 +93,8 @@ public class HomeController
         }
         genreName = genreName.substring( 0, genreName.length() - 1 );
 
+        
+        
         model.addAttribute( "genre", genreName );
         model.addAttribute( "movies", movie );
         model.addAttribute( "movieUserWatched", movieUserWatched );
