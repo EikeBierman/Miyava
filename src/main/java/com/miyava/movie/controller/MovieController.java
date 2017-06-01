@@ -53,6 +53,10 @@ public class MovieController
 
     private static final java.util.Date Date = null;
 
+    private static final String THEMOVIEDB_API_KEY = "e32412fcd041dff3927fd5c7c5498600";
+
+    private static final String THEMOVIEDB_LANG = "de_DE";
+
     @Autowired
     private MovieDao movieDao;
 
@@ -120,7 +124,7 @@ public class MovieController
         }
         else {
             watched = "Noch nicht gesehen";
-        }        
+        }
         model.addAttribute( "userMovieWatched", watched );
         model.addAttribute( "genres", Genres );
         model.addAttribute( "selectgenres", GenreName );
@@ -140,19 +144,21 @@ public class MovieController
         User currentUser = userDao.findOneByUsername( auth.getName() );
         Movie movie = movieDao.findOne( id );
         Boolean save = false;
-        if(currentUser.getUserMovies().isEmpty()){
+        if ( currentUser.getUserMovies().isEmpty() ) {
             save = true;
-        } else {
-            for(UserMovie s: currentUser.getUserMovies()){
+        }
+        else {
+            for ( UserMovie s : currentUser.getUserMovies() ) {
                 if ( s.getMovie().getId() != movie.getId() ) {
                     save = true;
-                } else {
+                }
+                else {
                     save = false;
                     break;
                 }
             }
         }
-        if(save){
+        if ( save ) {
             java.util.Date dt = new java.util.Date();
 
             java.text.SimpleDateFormat sdf =
@@ -165,7 +171,7 @@ public class MovieController
         }
 
         model.addAttribute( "movie", movieDao.findOne( id ) );
-        
+
         return "redirect:/movie/" + movie.getId();
     }
 
@@ -212,17 +218,142 @@ public class MovieController
     }
 
     @Secured( "ROLE_ADMIN" )
+    @RequestMapping( value = "/add/all" )
+    public String addAllMovies( @Valid Movie movie, Errors errors, RedirectAttributes ra, Model model ) {
+        URL allmoviesUrl = null;
+        URL url = null;
+        movie = null;
+        Long LastMovieId = null;
+        String message = "";
+        String MovieTitle = "";
+        int countAllMovies = 0;
+        int cut = 100;
+
+        ObjectMapper jsonMapper = new ObjectMapper();
+        jsonMapper.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
+        ObjectMapper jsonMapperMovie = new ObjectMapper();
+        jsonMapperMovie.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
+
+        try {
+            allmoviesUrl =
+                new URL( "https://api.themoviedb.org/3/movie/latest?api_key=" + THEMOVIEDB_API_KEY + "&language=" + THEMOVIEDB_LANG );
+            try (BufferedReader reader = new BufferedReader( new InputStreamReader( allmoviesUrl.openStream(), "UTF-8" ) )) {
+                String jsonText = readAll( reader );
+                movie = jsonMapper.readValue( jsonText, Movie.class );
+                if ( movie != null ) {
+                    LastMovieId = movie.getId();
+                }
+            }
+            catch ( IOException e ) {
+                e.printStackTrace();
+            }
+        }
+        catch ( MalformedURLException e ) {
+            e.printStackTrace();
+        }
+        if ( LastMovieId != 0L ) {
+            for ( int i = 0; i <= Math.toIntExact( LastMovieId ); i++ ) {
+                errors = null;
+                try {
+                    url = new URL(
+                        "https://api.themoviedb.org/3/movie/" + i + "?api_key=" + THEMOVIEDB_API_KEY + "&language=" + THEMOVIEDB_LANG );
+                    try (BufferedReader reader = new BufferedReader( new InputStreamReader( url.openStream(), "UTF-8" ) )) {
+                        String jsonText = readAll( reader );
+                        movie = jsonMapper.readValue( jsonText, Movie.class );
+                        if ( movie != null ) {
+
+                            if ( movieDao.findOneByTitle( movie.getTitle() ) != null ) {
+                                MovieTitle = movieDao.findOneByTitle( movie.getTitle() ).getTitle();
+                            }
+                            else {
+                                MovieTitle = "";
+                            }
+
+                            if ( movie.getTitle().equals( MovieTitle ) ) {
+                                message = "Den Film gibt es schon";
+                                // break;
+                            }
+                            else {
+                                for ( Genres s : movie.getGenres() ) {
+                                    if ( genreDao.findOneByName( s.getName() ) != null ) {
+                                        s.setId( genreDao.findOneByName( s.getName() ).getId() );
+                                        s.setCreatedBy( genreDao.findOneByName( s.getName() ).getCreatedBy() );
+                                        s.setCreatedDate( genreDao.findOneByName( s.getName() ).getCreatedDate() );
+                                        s.setLastModifiedBy( genreDao.findOneByName( s.getName() ).getLastModifiedBy() );
+                                        s.setLastModifiedDate( genreDao.findOneByName( s.getName() ).getLastModifiedDate() );
+                                    }
+                                }
+
+                                if ( movie.getOverview() == null || movie.getOverview().isEmpty() ) {
+                                    movie.setOverview( "Zurzeit gibt es keine Beschreibung" );
+                                }
+
+                                if ( movie.getTitle() == null || movie.getTitle().isEmpty() ) {
+                                    movie.setTitle( "Zurzeit gibt es kein Title" );
+                                }
+
+                                if ( movie.getPoster_path() == null || movie.getPoster_path().isEmpty() ) {
+                                    movie.setPoster_path( "http://manntheatres.com/images/ui/no-image-185x278.jpg" );
+                                }
+                                else {
+                                    movie.setPoster_path( "https://image.tmdb.org/t/p/w185_and_h278_bestv2/" + movie.getPoster_path() );
+                                }
+
+                                if ( movie.getRuntime() == null || movie.getRuntime().isEmpty() ) {
+                                    movie.setRuntime( "0" );
+                                }
+
+                                if ( movie.getOverview().length() >= cut ) {
+
+                                    movie.setShortOverview( movie.getOverview().substring( 0, cut ) + "..." );
+                                }
+                                else {
+                                    movie.setShortOverview( movie.getOverview() );
+                                }
+
+                                Movie savedMovie = movieDao.doSave( movie, errors );
+                                if ( savedMovie != null ) {
+                                    countAllMovies++;
+                                }
+                                else {
+                                    message = "Es ist ein Fehler aufgetreten.";
+                                    break;
+                                }
+                            }
+                        }
+
+                    }
+                    catch ( IOException e ) {
+                        // e.printStackTrace();
+                    }
+                }
+                catch ( MalformedURLException e ) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        if ( message == "" ) {
+            message = "Es wurden" + countAllMovies + "hinzugefügt";
+        }
+
+        MessageHelper.addSuccessAttribute( ra, message );
+        return "redirect:/movies";
+    }
+
+    @Secured( "ROLE_ADMIN" )
     @RequestMapping( value = "/add/{id}", method = RequestMethod.GET )
     public String addMovies( @PathVariable Long id, @Valid Movie movie, Errors errors, RedirectAttributes ra, Model model ) {
         URL url = null;
         movie = null;
+        int cut = 100;
 
         ObjectMapper jsonMapper = new ObjectMapper();
         jsonMapper.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
 
         errors = null;
         try {
-            url = new URL( "https://api.themoviedb.org/3/movie/" + id + "?api_key=e32412fcd041dff3927fd5c7c5498600&language=de" );
+            url = new URL( "https://api.themoviedb.org/3/movie/" + id + "?api_key=" + THEMOVIEDB_API_KEY + "&language=" + THEMOVIEDB_LANG );
             try (BufferedReader reader = new BufferedReader( new InputStreamReader( url.openStream(), "UTF-8" ) )) {
                 String jsonText = readAll( reader );
                 movie = jsonMapper.readValue( jsonText, Movie.class );
@@ -238,9 +369,34 @@ public class MovieController
                             s.setLastModifiedDate( genreDao.findOneByName( s.getName() ).getLastModifiedDate() );
                         }
                     }
-                    
-                    movie.setPoster_path( "https://image.tmdb.org/t/p/w185_and_h278_bestv2/"+ movie.getPoster_path() );
-                    
+
+                    if ( movie.getOverview() == null || movie.getOverview().isEmpty() ) {
+                        movie.setOverview( "Zurzeit gibt es keine Beschreibung" );
+                    }
+
+                    if ( movie.getTitle() == null || movie.getTitle().isEmpty() ) {
+                        movie.setTitle( "Zurzeit gibt es kein Title" );
+                    }
+
+                    if ( movie.getPoster_path() == null || movie.getPoster_path().isEmpty() ) {
+                        movie.setPoster_path( "http://manntheatres.com/images/ui/no-image-185x278.jpg" );
+                    }
+                    else {
+                        movie.setPoster_path( "https://image.tmdb.org/t/p/w185_and_h278_bestv2/" + movie.getPoster_path() );
+                    }
+
+                    if ( movie.getRuntime() == null || movie.getRuntime().isEmpty() ) {
+                        movie.setRuntime( "0" );
+                    }
+
+                    if ( movie.getOverview().length() >= cut ) {
+
+                        movie.setShortOverview( movie.getOverview().substring( 0, cut ) + "..." );
+                    }
+                    else {
+                        movie.setShortOverview( movie.getOverview() );
+                    }
+
                     Movie savedMovie = movieDao.doSave( movie, errors );
                     if ( savedMovie != null ) {
                         MessageHelper.addSuccessAttribute( ra, "common.message.success_create" );

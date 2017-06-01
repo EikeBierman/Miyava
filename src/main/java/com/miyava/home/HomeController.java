@@ -96,7 +96,6 @@ public class HomeController
         model.addAttribute( "genre", genreName );
         model.addAttribute( "movies", movie );
         model.addAttribute( "movieUserWatched", movieUserWatched );
-        // model.addAttribute( "userWatched", UserWatched );
 
         return "home/movies";
     }

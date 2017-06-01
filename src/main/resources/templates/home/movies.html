@@ -45,20 +45,19 @@
 									th:src="@{${movie.poster_path}}">
 							</div>
 							<div class="col-md-7">
-								<div class="col-md-7 col-md-offset-7">
-									Daumen 
-								</div>
+								<div class="col-md-7 col-md-offset-7">Daumen</div>
 								<div class="clearfix"></div>
 								<div>
-									<i class="glyphicon glyphicon-calendar" style="float:left;"></i>
+									<i class="glyphicon glyphicon-calendar" style="float: left;"></i>
 									<span th:text="${movie.release_date}">Release_date</span>
-									<span th:text="${genre}">Genres</span>
+									<!-- <div th:each="genre : ${movie.genres}">
+										<span th:text="${genre.name}">Genres</span>
+									</div>-->
 								</div>
 								<div>
 									<h6>Handlung</h6>
-									<hr>
-									<span th:text="${movie.overview}">Handlung</span>
-								</div>
+									<span th:text="${movie.shortOverview}">Handlung</span>
+								</div> 
 							</div>
 						</div>
 						<div class="panel-footer">

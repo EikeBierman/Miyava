@@ -27,7 +27,7 @@ public class Movie
     @JsonView( DataTablesOutput.View.class )
     private Long id;
 
-    @NotEmpty( message = "movie.messages.movie_empty" )
+    @NotEmpty( message = "movie.messages.title_empty" )
     @Column( nullable = false, unique = false, length = 255 )
     @Length( max = 255, message = "common.message.data_to_long" )
     @JsonView( DataTablesOutput.View.class )
@@ -39,19 +39,23 @@ public class Movie
     @JsonView( DataTablesOutput.View.class )
     private String overview;
 
-    @NotEmpty( message = "movie.messages.movie_empty" )
+    @Column( nullable = true, unique = false )
+    @JsonView( DataTablesOutput.View.class )
+    private String short_Overview;
+
+    @NotEmpty( message = "movie.messages.poster_Path_empty" )
     @Column( nullable = false, unique = false, length = 255 )
     @Length( max = 255, message = "common.message.data_to_long" )
     @JsonView( DataTablesOutput.View.class )
     private String poster_path;
 
-    @NotEmpty( message = "movie.messages.movie_empty" )
+    @NotEmpty( message = "movie.messages.runtime_empty" )
     @Column( nullable = false, unique = false, length = 255 )
     @Length( max = 255, message = "common.message.data_to_long" )
     @JsonView( DataTablesOutput.View.class )
     private String runtime;
 
-    @NotEmpty( message = "movie.messages.movie_empty" )
+    @NotEmpty( message = "movie.messages.status_empty" )
     @Column( nullable = false, unique = false, length = 255 )
     @Length( max = 255, message = "common.message.data_to_long" )
     @JsonView( DataTablesOutput.View.class )
@@ -71,10 +75,11 @@ public class Movie
 
     public Movie() {}
 
-    public Movie( String title, String overview, String status, Date release_date, List<Genres> genres ) {
+    public Movie( String title, String overview, String short_Overview, String status, Date release_date, List<Genres> genres ) {
         super();
         this.title = title;
         this.overview = overview;
+        this.short_Overview = short_Overview;
         this.status = status;
         this.release_date = release_date;
         this.genres = genres;
@@ -94,6 +99,14 @@ public class Movie
 
     public void setTitle( String title ) {
         this.title = title;
+    }
+
+    public String getShortOverview() {
+        return short_Overview;
+    }
+
+    public void setShortOverview( String short_Overview ) {
+        this.short_Overview = short_Overview;
     }
 
     public String getOverview() {
