@@ -33,5 +33,4 @@ public class MovieRestController {
     public DataTablesOutput<Movie> getMovie( @Valid DataTablesInput input ) {
         return movieDao.findAll( input );
     }
-
 }

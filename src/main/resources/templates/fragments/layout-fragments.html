@@ -83,7 +83,7 @@
 				<li class=""><a href="#" th:href="@{/movies}"><i
 						class="fa fa-film"></i> <span
 						th:text="#{common.menu.movie}">Movie</span></a></li>
-				<li class="treeview active"><a
+				<li class="treeview"><a
 					href="#"><i class="fa fa-gears"></i><span
 						th:text="#{common.menu.statistic}">Statistik</span> <i
 						class="fa fa-angle-left pull-right"></i></a>
@@ -95,7 +95,7 @@
 				</li>
 				
 				<!-- Stammdaten -->
-				<li sec:authorize="hasRole('ROLE_ADMIN')" class="treeview active"><a
+				<li sec:authorize="hasRole('ROLE_ADMIN')" class="treeview"><a
 					href="#"><i class="fa fa-gears"></i><span
 						th:text="#{common.menu.masterdata}">Master Data</span> <i
 						class="fa fa-angle-left pull-right"></i></a>

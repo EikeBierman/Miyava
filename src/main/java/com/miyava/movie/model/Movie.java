@@ -27,6 +27,9 @@ public class Movie
     @JsonView( DataTablesOutput.View.class )
     private Long id;
 
+    @Column( name = "theMovieDbId" )
+    private Long theMovieDbId;
+
     @NotEmpty( message = "movie.messages.title_empty" )
     @Column( nullable = false, unique = false, length = 255 )
     @Length( max = 255, message = "common.message.data_to_long" )
@@ -101,14 +104,6 @@ public class Movie
         this.title = title;
     }
 
-    public String getShortOverview() {
-        return short_Overview;
-    }
-
-    public void setShortOverview( String short_Overview ) {
-        this.short_Overview = short_Overview;
-    }
-
     public String getOverview() {
         return overview;
     }
@@ -135,6 +130,22 @@ public class Movie
 
     public String getStatus() {
         return status;
+    }
+
+    public Long getTheMovieDbId() {
+        return theMovieDbId;
+    }
+
+    public void setTheMovieDbId( Long theMovieDbId ) {
+        this.theMovieDbId = theMovieDbId;
+    }
+
+    public String getShort_Overview() {
+        return short_Overview;
+    }
+
+    public void setShort_Overview( String short_Overview ) {
+        this.short_Overview = short_Overview;
     }
 
     public void setStatus( String status ) {

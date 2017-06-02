@@ -234,11 +234,11 @@ public class MovieController
         ObjectMapper jsonMapperMovie = new ObjectMapper();
         jsonMapperMovie.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
 
-        String sql2 = "select count(*) from movie";
+        String sql2 = "SELECT max(the_movie_db_id) FROM movie";
         String movieCount = jdbcTemplate.queryForObject( sql2, String.class );
         int countMovies = 0;
 
-        if ( movieCount == "" || movieCount.isEmpty() ) {
+        if ( movieCount == null ) {
             countMovies = 0;
         }
         else {
@@ -314,12 +314,13 @@ public class MovieController
                                 }
 
                                 if ( movie.getOverview().length() >= cut ) {
-
-                                    movie.setShortOverview( movie.getOverview().substring( 0, cut ) + "..." );
+                                    movie.setShort_Overview( movie.getOverview().substring( 0, cut ) + "..." );
                                 }
                                 else {
-                                    movie.setShortOverview( movie.getOverview() );
+                                    movie.setShort_Overview( movie.getOverview() );
                                 }
+
+                                movie.setTheMovieDbId( movie.getId() );
 
                                 Movie savedMovie = movieDao.doSave( movie, errors );
                                 if ( savedMovie != null ) {
@@ -400,12 +401,13 @@ public class MovieController
                     }
 
                     if ( movie.getOverview().length() >= cut ) {
-
-                        movie.setShortOverview( movie.getOverview().substring( 0, cut ) + "..." );
+                        movie.setShort_Overview( movie.getOverview().substring( 0, cut ) + "..." );
                     }
                     else {
-                        movie.setShortOverview( movie.getOverview() );
+                        movie.setShort_Overview( movie.getOverview() );
                     }
+
+                    movie.setTheMovieDbId( movie.getId() );
 
                     Movie savedMovie = movieDao.doSave( movie, errors );
                     if ( savedMovie != null ) {

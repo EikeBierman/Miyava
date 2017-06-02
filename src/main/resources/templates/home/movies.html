@@ -19,7 +19,7 @@
 
 		<div class="container">
 			<div class="row">
-				<div th:each="movie : ${movies}" class="col-md-6">
+				<div th:each="movie : ${movies.pageList}" class="col-md-6">
 					<div class="panel panel-default">
 						<div style="margin: 0 !important;"
 							th:if="${#lists.contains(movieUserWatched, movie)}"
@@ -56,17 +56,60 @@
 								</div>
 								<div>
 									<h6>Handlung</h6>
-									<span th:text="${movie.shortOverview}">Handlung</span>
-								</div> 
+									<span th:text="${movie.short_Overview}">Handlung</span>
+								</div>
 							</div>
 						</div>
 						<div class="panel-footer">
 							<a href="#" th:href="@{'/movies/' + ${movie.id} }"
 								class="small-box-footer">More info <i
 								class="fa fa-arrow-circle-right"></i></a>
+							<form action="#"
+								th:action="@{'/movies/page/' + ${currentIndex} + '/movie/'+${movie.id}+'/update'}"
+								th:object="${movie}" method="post"
+								class="form-horizontal form-custom ajax-form"
+								novalidate="novalidate">
+								<button type="submit" name="shown" style="margin-top: -27px;"
+									class="btn btn-info pull-right"
+									th:text="#{common.button.geguckt}">Geguckt</button>
+							</form>
 						</div>
 					</div>
 					<!-- /.box -->
+				</div>
+				<div class="col-md-12 text-center">
+					<div class="pagination pagination-centered">
+						<ul class="pagination">
+							<li th:class="${currentIndex == 1}? 'disabled' : ''"><span
+								th:if="${currentIndex == 1}">First</span> <a
+								th:if="${currentIndex != 1}" th:href="@{/movies/page/1}">First</a>
+							</li>
+							<li th:class="${currentIndex != 1}? '' : 'disabled'"><span
+								th:if="${currentIndex == 1}">&laquo;</span> <a
+								th:if="${currentIndex != 1}"
+								th:href="@{|${baseUrl}${currentIndex -1}|}"
+								title="Go to previous Page">&laquo;</a></li>
+
+							<li th:each="item: ${#numbers.sequence(beginIndex, endIndex)}"
+								th:class="${item == currentIndex ? 'active': '' } "><span
+								th:if="${item == currentIndex}" th:text="${item}">1</span> <a
+								th:if="${item != currentIndex}" th:href="@{|${baseUrl}${item}|}">
+									<span th:text="${item}">1</span>
+							</a></li>
+
+							<li th:class="${currentIndex != totalPageCount}? '' : 'disabled'"><span
+								th:if="${currentIndex == totalPageCount}">&raquo;</span> <a
+								th:if="${currentIndex != totalPageCount}"
+								th:href="@{|${baseUrl}${currentIndex + 1}|}"
+								title="Go to next Page">&raquo;</a></li>
+
+							<li th:class="${currentIndex == totalPageCount}? 'disabled' : ''"><span
+								th:if="${currentIndex == totalPageCount}">Last</span> <a
+								th:if="${currentIndex != totalPageCount}"
+								th:href="@{|${baseUrl}${totalPageCount}|}">Last</a></li>
+
+						</ul>
+					</div>
 				</div>
 			</div>
 		</div>
