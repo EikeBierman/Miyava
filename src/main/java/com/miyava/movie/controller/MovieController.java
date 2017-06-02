@@ -234,6 +234,16 @@ public class MovieController
         ObjectMapper jsonMapperMovie = new ObjectMapper();
         jsonMapperMovie.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
 
+        String sql2 = "select count(*) from movie";
+        String movieCount = jdbcTemplate.queryForObject( sql2, String.class );
+        int countMovies = 0;
+
+        if ( movieCount == "" || movieCount.isEmpty() ) {
+            countMovies = 0;
+        }
+        else {
+            countMovies = Integer.parseInt( movieCount );
+        }
         try {
             allmoviesUrl =
                 new URL( "https://api.themoviedb.org/3/movie/latest?api_key=" + THEMOVIEDB_API_KEY + "&language=" + THEMOVIEDB_LANG );
@@ -252,7 +262,7 @@ public class MovieController
             e.printStackTrace();
         }
         if ( LastMovieId != 0L ) {
-            for ( int i = 0; i <= Math.toIntExact( LastMovieId ); i++ ) {
+            for ( int i = countMovies - 1; i <= Math.toIntExact( LastMovieId ); i++ ) {
                 errors = null;
                 try {
                     url = new URL(
