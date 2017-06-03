@@ -228,13 +228,14 @@ public class MovieController
         String MovieTitle = "";
         int countAllMovies = 0;
         int cut = 100;
+        int fehlerCount = 0;
 
         ObjectMapper jsonMapper = new ObjectMapper();
         jsonMapper.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
         ObjectMapper jsonMapperMovie = new ObjectMapper();
         jsonMapperMovie.configure( DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false );
 
-        String sql2 = "SELECT max(the_movie_db_id) FROM movie";
+        String sql2 = "SELECT max(movie_id) FROM movie";
         String movieCount = jdbcTemplate.queryForObject( sql2, String.class );
         int countMovies = 0;
 
@@ -261,6 +262,9 @@ public class MovieController
         catch ( MalformedURLException e ) {
             e.printStackTrace();
         }
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userDao.findOneByUsername( auth.getName() );
+
         if ( LastMovieId != 0L ) {
             for ( int i = countMovies - 1; i <= Math.toIntExact( LastMovieId ); i++ ) {
                 errors = null;
@@ -269,83 +273,95 @@ public class MovieController
                         "https://api.themoviedb.org/3/movie/" + i + "?api_key=" + THEMOVIEDB_API_KEY + "&language=" + THEMOVIEDB_LANG );
                     try (BufferedReader reader = new BufferedReader( new InputStreamReader( url.openStream(), "UTF-8" ) )) {
                         String jsonText = readAll( reader );
-                        movie = jsonMapper.readValue( jsonText, Movie.class );
-                        if ( movie != null ) {
-
-                            if ( movieDao.findOneByTitle( movie.getTitle() ) != null ) {
-                                MovieTitle = movieDao.findOneByTitle( movie.getTitle() ).getTitle();
-                            }
-                            else {
-                                MovieTitle = "";
-                            }
-
-                            if ( movie.getTitle().equals( MovieTitle ) ) {
-                                message = "Den Film gibt es schon";
-                                // break;
-                            }
-                            else {
-                                for ( Genres s : movie.getGenres() ) {
-                                    if ( genreDao.findOneByName( s.getName() ) != null ) {
-                                        s.setId( genreDao.findOneByName( s.getName() ).getId() );
-                                        s.setCreatedBy( genreDao.findOneByName( s.getName() ).getCreatedBy() );
-                                        s.setCreatedDate( genreDao.findOneByName( s.getName() ).getCreatedDate() );
-                                        s.setLastModifiedBy( genreDao.findOneByName( s.getName() ).getLastModifiedBy() );
-                                        s.setLastModifiedDate( genreDao.findOneByName( s.getName() ).getLastModifiedDate() );
-                                    }
-                                }
-
-                                if ( movie.getOverview() == null || movie.getOverview().isEmpty() ) {
-                                    movie.setOverview( "Zurzeit gibt es keine Beschreibung" );
-                                }
-
-                                if ( movie.getTitle() == null || movie.getTitle().isEmpty() ) {
-                                    movie.setTitle( "Zurzeit gibt es kein Title" );
-                                }
-
-                                if ( movie.getPoster_path() == null || movie.getPoster_path().isEmpty() ) {
-                                    movie.setPoster_path( "http://manntheatres.com/images/ui/no-image-185x278.jpg" );
-                                }
-                                else {
-                                    movie.setPoster_path( "https://image.tmdb.org/t/p/w185_and_h278_bestv2/" + movie.getPoster_path() );
-                                }
-
-                                if ( movie.getRuntime() == null || movie.getRuntime().isEmpty() ) {
-                                    movie.setRuntime( "0" );
-                                }
-
-                                if ( movie.getOverview().length() >= cut ) {
-                                    movie.setShort_Overview( movie.getOverview().substring( 0, cut ) + "..." );
-                                }
-                                else {
-                                    movie.setShort_Overview( movie.getOverview() );
-                                }
-
-                                movie.setTheMovieDbId( movie.getId() );
-
-                                Movie savedMovie = movieDao.doSave( movie, errors );
-                                if ( savedMovie != null ) {
-                                    countAllMovies++;
-                                }
-                                else {
-                                    message = "Es ist ein Fehler aufgetreten.";
-                                    break;
-                                }
-                            }
+                        if ( jsonText != null ) {
+                            movie = jsonMapper.readValue( jsonText, Movie.class );
                         }
-
                     }
                     catch ( IOException e ) {
-                        // e.printStackTrace();
+                        e.printStackTrace();
                     }
                 }
                 catch ( MalformedURLException e ) {
                     e.printStackTrace();
                 }
+
+                if ( movie != null ) {
+
+                    if ( movieDao.findOneByTitle( movie.getTitle() ) != null ) {
+                        MovieTitle = movieDao.findOneByTitle( movie.getTitle() ).getTitle();
+                    }
+                    else {
+                        MovieTitle = "";
+                    }
+
+                    if ( movie.getTitle().equals( MovieTitle ) ) {
+                        message = "Den Film gibt es schon";
+                        // break;
+                    }
+                    else {
+                        for ( Genres s : movie.getGenres() ) {
+                            if ( genreDao.findOneByName( s.getName() ) != null ) {
+                                s.setId( genreDao.findOneByName( s.getName() ).getId() );
+                                s.setCreatedBy( genreDao.findOneByName( s.getName() ).getCreatedBy() );
+                                s.setCreatedDate( genreDao.findOneByName( s.getName() ).getCreatedDate() );
+                                s.setLastModifiedBy( genreDao.findOneByName( s.getName() ).getLastModifiedBy() );
+                                s.setLastModifiedDate( genreDao.findOneByName( s.getName() ).getLastModifiedDate() );
+                            }
+                        }
+
+                        if ( movie.getOverview() == null || movie.getOverview().isEmpty() ) {
+                            movie.setOverview( "Zurzeit gibt es keine Beschreibung" );
+                        }
+
+                        if ( movie.getTitle() == null || movie.getTitle().isEmpty() ) {
+                            movie.setTitle( "Zurzeit gibt es kein Title" );
+                        }
+
+                        if ( movie.getPoster_path() == null || movie.getPoster_path().isEmpty() ) {
+                            movie.setPoster_path( "http://manntheatres.com/images/ui/no-image-185x278.jpg" );
+                        }
+                        else {
+                            movie.setPoster_path( "https://image.tmdb.org/t/p/w185_and_h278_bestv2/" + movie.getPoster_path() );
+                        }
+
+                        if ( movie.getRuntime() == null || movie.getRuntime().isEmpty() ) {
+                            movie.setRuntime( "0" );
+                        }
+
+                        if ( movie.getOverview().length() >= cut ) {
+                            movie.setShort_Overview( movie.getOverview().substring( 0, cut ) + "..." );
+                        }
+                        else {
+                            movie.setShort_Overview( movie.getOverview() );
+                        }
+
+                        if ( movie.getCreatedBy() == null || movie.getCreatedBy().isEmpty() ) {
+                            movie.setCreatedBy( currentUser.getUsername() );
+                        }
+
+                        if ( movie.getCreatedDate() == null ) {
+                            movie.setCreatedDate( Date );
+                        }
+
+                        movie.setTheMovieDbId( movie.getId() );
+                        if ( movie.getTheMovieDbId() == null ) {
+                            movie.setTheMovieDbId( 0000L );
+                        }
+
+                        Movie savedMovie = movieDao.doSave( movie, errors );
+                        if ( savedMovie != null ) {
+                            countAllMovies++;
+                        }
+                        else {
+                            fehlerCount++;
+                        }
+                    }
+                }
             }
         }
 
         if ( message == "" ) {
-            message = "Es wurden" + countAllMovies + "hinzugefügt";
+            message = "Es wurden" + countAllMovies + "hinzugefügt und es hab " + fehlerCount + "Fehler";
         }
 
         MessageHelper.addSuccessAttribute( ra, message );

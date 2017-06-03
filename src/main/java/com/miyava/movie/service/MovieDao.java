@@ -38,7 +38,7 @@ public class MovieDao
         // Movie bereits vergeben?
         Movie tmpMovie = findOneByTitle( entity.getTitle() );
         if ( tmpMovie != null && !tmpMovie.getId().equals( entity.getId() ) ) {
-            errors.rejectValue( "movie", "movie.messages.id_already_exists", new Object[] { entity.getTitle() }, null );
+            //errors.rejectValue( "movie", "movie.messages.id_already_exists", new Object[] { entity.getTitle() }, null );
             return false;
         }
 
