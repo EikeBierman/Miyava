@@ -24,6 +24,7 @@ import com.fasterxml.jackson.annotation.JsonView;
 import com.miyava.auditing.AuditedEntityWithUUID;
 import com.miyava.common.NotEmpty;
 import com.miyava.movie.model.UserMovie;
+import com.miyava.serie.model.UserSerie;
 
 @Entity
 public class User
@@ -87,6 +88,10 @@ public class User
     @OneToMany( mappedBy = "user" )
     @JsonView( DataTablesOutput.View.class )
     private List<UserMovie> userMovies = new ArrayList<UserMovie>();
+
+    @OneToMany( mappedBy = "user" )
+    @JsonView( DataTablesOutput.View.class )
+    private List<UserSerie> userSeries = new ArrayList<UserSerie>();
 
     public User() {
         // needed for serialization
@@ -201,8 +206,16 @@ public class User
         return userMovies;
     }
 
-    public void setUserMovies( List<UserMovie> userMovies) {
+    public void setUserMovies( List<UserMovie> userMovies ) {
         this.userMovies = userMovies;
+    }
+
+    public List<UserSerie> getUserSeries() {
+        return userSeries;
+    }
+
+    public void setUserSeries( List<UserSerie> userSeries ) {
+        this.userSeries = userSeries;
     }
 
 }

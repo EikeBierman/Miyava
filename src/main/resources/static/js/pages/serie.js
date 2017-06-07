@@ -22,7 +22,7 @@ $(document).ready(function() {
 			data : 'name'
 		},
 		{
-			data : 'description'
+			data : 'overview'
 		}]
 	});
 

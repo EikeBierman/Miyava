@@ -1,17 +1,13 @@
 package com.miyava.movie.service;
 
-import java.awt.List;
 import java.util.ArrayList;
-import java.util.Iterator;
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.Errors;
-
 import com.google.common.base.Optional;
 import com.google.common.base.Strings;
 import com.miyava.common.CrudDao;
-import com.miyava.genres.model.Genres;
 import com.miyava.movie.model.Movie;
 import com.miyava.movie.repository.MovieRepository;
 
@@ -35,10 +31,11 @@ public class MovieDao
             return false;
         }
 
-        // Movie bereits vergeben?
+        // Movie are used?
         Movie tmpMovie = findOneByTitle( entity.getTitle() );
         if ( tmpMovie != null && !tmpMovie.getId().equals( entity.getId() ) ) {
-            //errors.rejectValue( "movie", "movie.messages.id_already_exists", new Object[] { entity.getTitle() }, null );
+            // errors.rejectValue( "movie", "movie.messages.id_already_exists", new Object[] { entity.getTitle() }, null
+            // );
             return false;
         }
 
@@ -63,6 +60,13 @@ public class MovieDao
 
     public ArrayList<Movie> getMovies() {
         Iterable<Movie> source = repository.findAll();
+        ArrayList<Movie> target = new ArrayList<Movie>();
+        source.forEach( target::add );
+        return target;
+    }
+
+    public ArrayList<Movie> findAll( int pageNumber, int pageSize ) {
+        Iterable<Movie> source = repository.findAll( new PageRequest( pageNumber, pageSize ) );
         ArrayList<Movie> target = new ArrayList<Movie>();
         source.forEach( target::add );
         return target;

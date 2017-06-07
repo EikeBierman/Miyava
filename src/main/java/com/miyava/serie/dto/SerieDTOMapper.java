@@ -11,7 +11,7 @@ public class SerieDTOMapper
         SerieDTO dto = new SerieDTO();
         dto.setId( input.getId() );
         dto.setName( input.getName() );
-        dto.setDescription( input.getDescription() );
+        /* dto.setDescription( input.getOverview() ); */
 
         return dto;
     }

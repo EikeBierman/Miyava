@@ -1,23 +1,18 @@
 package com.miyava.home;
 
 import java.sql.Connection;
-
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.support.MutableSortDefinition;
 import org.springframework.beans.support.PagedListHolder;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.DataSourceUtils;
-
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.sql.DataSource;
-
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
@@ -26,13 +21,15 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.miyava.common.AbstractController;
 import com.miyava.genres.model.Genres;
 import com.miyava.movie.model.Movie;
 import com.miyava.movie.model.UserMovie;
 import com.miyava.movie.service.MovieDao;
+import com.miyava.serie.model.Serie;
+import com.miyava.serie.model.UserSerie;
+import com.miyava.serie.service.SerieDao;
 import com.miyava.user.model.User;
 import com.miyava.user.service.UserDao;
 import com.miyava.util.BreadCrumbs;
@@ -53,6 +50,9 @@ public class HomeController
 
     @Autowired
     private MovieDao movieDao;
+
+    @Autowired
+    private SerieDao serieDao;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -119,14 +119,18 @@ public class HomeController
         return "redirect:/movies/page/" + pageNumber;
     }
 
+    @SuppressWarnings( "null" )
     @RequestMapping( value = "/movies/page/{pageNumber}", method = org.springframework.web.bind.annotation.RequestMethod.GET )
     public String showPagedMoviePage( HttpServletRequest request, @PathVariable Integer pageNumber, Model model,
                                       @RequestHeader( value = "X-Requested-With", required = false ) String requestedWith ) {
         PagedListHolder<?> pagedListHolder = (PagedListHolder<?>) request.getSession().getAttribute( "movie" );
 
-        int MOVIE_LIST_PAGE_SIZE = 20;
-
-        List<Movie> movies = movieDao.getMovies();
+        int MOVIE_LIST_PAGE_SIZE = 10;
+        List<Movie> movies = null;
+        for ( Movie s : movieDao.findAll( pageNumber, MOVIE_LIST_PAGE_SIZE ) ) {
+            movies.add( s );
+        }
+        // List<Movie> movies = movieDao.findAll( pageNumber, MOVIE_LIST_PAGE_SIZE );
 
         if ( pagedListHolder == null ) {
             pagedListHolder = new PagedListHolder<>( movies );
@@ -167,6 +171,7 @@ public class HomeController
                 genreName += "" + g.getName() + ", ";
             }
         }
+
         genreName = genreName.substring( 0, genreName.length() - 1 );
 
         model.addAttribute( "genre", genreName );
@@ -199,6 +204,73 @@ public class HomeController
         model.addAttribute( "genre", genre );
 
         return "home/showMovie";
+    }
+
+    @RequestMapping( value = ( "/series" ) )
+    public String Serie( Model model, HttpServletRequest request ) {
+        request.getSession().setAttribute( "serie", null );
+
+        return "redirect:/series/page/1";
+    }
+
+    @RequestMapping( value = "/series/page/{pageNumber}", method = org.springframework.web.bind.annotation.RequestMethod.GET )
+    public String showPagedSeriePage( HttpServletRequest request, @PathVariable Integer pageNumber, Model model,
+                                      @RequestHeader( value = "X-Requested-With", required = false ) String requestedWith ) {
+        PagedListHolder<?> pagedListHolder = (PagedListHolder<?>) request.getSession().getAttribute( "serie" );
+
+        int SERIE_LIST_PAGE_SIZE = 10;
+
+        List<Serie> series = serieDao.getSeries();
+
+        if ( pagedListHolder == null ) {
+            pagedListHolder = new PagedListHolder<>( series );
+            pagedListHolder.setPageSize( SERIE_LIST_PAGE_SIZE );
+        }
+        else {
+            final int goToPage = pageNumber - 1;
+            if ( goToPage <= pagedListHolder.getPageCount() && goToPage >= 0 ) {
+                pagedListHolder.setPage( goToPage );
+            }
+        }
+
+        request.getSession().setAttribute( "serie", pagedListHolder );
+
+        pagedListHolder.setSort( new MutableSortDefinition( "release_date", true, false ) );
+        pagedListHolder.resort();
+
+        int current = pagedListHolder.getPage() + 1;
+        int begin = Math.max( 1, current - SERIE_LIST_PAGE_SIZE );
+        int end = Math.min( begin + 5, pagedListHolder.getPageCount() );
+        int totalPageCount = pagedListHolder.getPageCount();
+        String baseUrl = "/series/page/";
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = userDao.findOneByUsername( auth.getName() );
+
+        List<UserSerie> UserWatched = currentUser.getUserSeries();
+
+        List<Serie> serieUserWatched = new ArrayList<Serie>();
+
+        for ( UserSerie u : UserWatched ) {
+            serieUserWatched.add( u.getSerie() );
+        }
+
+        /*
+         * String genreName = ""; for ( Serie s : serieDao.findAll() ) { for ( Genres g : s.getGenres() ) { genreName +=
+         * "" + g.getName() + ", "; } } genreName = genreName.substring( 0, genreName.length() - 1 );
+         */
+
+        /* model.addAttribute( "genre", genreName ); */
+        model.addAttribute( "serieUserWatched", serieUserWatched );
+
+        model.addAttribute( "beginIndex", begin );
+        model.addAttribute( "endIndex", end );
+        model.addAttribute( "currentIndex", current );
+        model.addAttribute( "totalPageCount", totalPageCount );
+        model.addAttribute( "baseUrl", baseUrl );
+        model.addAttribute( "series", pagedListHolder );
+
+        return "/home/series";
     }
 
     @RequestMapping( value = ( "/search" ) )

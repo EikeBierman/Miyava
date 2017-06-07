@@ -3,11 +3,8 @@ package com.miyava.movie.controller;
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.sql.Date;
 import java.util.*;
-
 import javax.validation.Valid;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.security.access.annotation.Secured;
@@ -322,6 +319,10 @@ public class MovieController
                         }
                         else {
                             movie.setPoster_path( "https://image.tmdb.org/t/p/w185_and_h278_bestv2/" + movie.getPoster_path() );
+                        }
+
+                        if ( movie.getStatus() == null || movie.getStatus().isEmpty() ) {
+                            movie.setStatus( "Zurzeit gibt es keinen Status" );
                         }
 
                         if ( movie.getRuntime() == null || movie.getRuntime().isEmpty() ) {

@@ -12,10 +12,9 @@ import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import com.miyava.auditing.AuditedEntity;
 import com.miyava.common.NotEmpty;
 import com.miyava.movie.model.Movie;
+import com.miyava.serie.model.Serie;
 
-@JsonIdentityInfo(
-    generator = ObjectIdGenerators.PropertyGenerator.class, 
-    property = "id")
+@JsonIdentityInfo( generator = ObjectIdGenerators.PropertyGenerator.class, property = "id" )
 @Entity
 public class Genres
     extends AuditedEntity
@@ -33,16 +32,14 @@ public class Genres
     @JsonView( DataTablesOutput.View.class )
     private String name;
 
-    @ManyToMany(cascade = CascadeType.ALL, targetEntity = Movie.class)
-    @JoinTable(name = "movie_genres",
-    inverseJoinColumns = @JoinColumn(name = "movie_id",
-            nullable = false,
-            updatable = false),
-    joinColumns = @JoinColumn(name = "genres_id",
-            nullable = false,
-            updatable = false))
+    @ManyToMany( cascade = CascadeType.ALL, targetEntity = Movie.class )
+    @JoinTable( name = "movie_genres", inverseJoinColumns = @JoinColumn( name = "movie_id", nullable = false, updatable = false ), joinColumns = @JoinColumn( name = "genres_id", nullable = false, updatable = false ) )
     private List<Movie> movies;
-    
+
+    @ManyToMany( cascade = CascadeType.ALL, targetEntity = Movie.class )
+    @JoinTable( name = "serie_genres", inverseJoinColumns = @JoinColumn( name = "serie_id", nullable = false, updatable = false ), joinColumns = @JoinColumn( name = "genres_id", nullable = false, updatable = false ) )
+    private List<Serie> series;
+
     public Genres() {}
 
     public Long getId() {
@@ -65,8 +62,16 @@ public class Genres
         return movies;
     }
 
-    public void setMovie(List<Movie> movies) {
+    public void setMovie( List<Movie> movies ) {
         this.movies = movies;
     }
-    
+
+    public List<Serie> getserie() {
+        return series;
+    }
+
+    public void setSerie( List<Serie> series ) {
+        this.series = series;
+    }
+
 }

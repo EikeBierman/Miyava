@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+	xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+	layout:decorator="layout/main-decorator"
+	xmlns:sec="http://www.thymeleaf.org/extras/dialect">
+<head>
+<title th:text="#{movie.page.title}">Movie</title>
+</head>
+<body>
+
+	<div layout:fragment="main-content">
+		<section class="content-header" style="margin-bottom: 2%;">
+			<h1 th:text="#{serie.page.title}">Entdecke neue Serien</h1>
+			<ol class="breadcrumb">
+				<li><a href="#"><i class="fa fa-dashboard"></i> Serie</a></li>
+				<li class="active">Liste</li>
+			</ol>
+		</section>
+
+		<div class="container">
+			<div class="row">
+				<div th:each="serie : ${series.pageList}" class="col-md-6">
+					<div class="panel panel-default">
+						<div style="margin: 0 !important;"
+							th:if="${#lists.contains(serieUserWatched, serie)}"
+							class="panel-heading box box-success">
+							<h4>
+								<i style="float: left; color: green; margin-right: 2%;"
+									class="fa fa-check-circle"> </i> <span class="info-box-number"
+									th:text="${serie.name}">SerieName</span>
+							</h4>
+						</div>
+						<div style="margin: 0 !important;"
+							th:unless="${#lists.contains(serieUserWatched, serie)}"
+							class="panel-heading box box-danger">
+							<h4>
+								<span class="info-box-number" th:text="${serie.name}">SerieName</span>
+							</h4>
+						</div>
+						<div class="panel-body">
+							<div class="col-md-5">
+								<img
+									style="margin-left: -16%; margin-bottom: -8%; opacity: 1; margin-top: -8%;"
+									data-sizes="auto" th:alt="${serie.name}"
+									th:src="@{${serie.poster_path}}">
+							</div>
+							<div class="col-md-7">
+								<div class="col-md-7 col-md-offset-7">Daumen</div>
+								<div class="clearfix"></div>
+								<div>
+									<i class="glyphicon glyphicon-calendar" style="float: left;"></i>
+									<span th:text="${serie.first_air_date}">first_air_date</span>
+									<!-- <div th:each="genre : ${movie.genres}">
+										<span th:text="${genre.name}">Genres</span>
+									</div>-->
+								</div>
+								<div>
+									<h6>Handlung</h6>
+									<span th:text="${serie.short_Overview}">Handlung</span>
+								</div>
+							</div>
+						</div>
+						<div class="panel-footer">
+							<a href="#" th:href="@{'/series/' + ${serie.id} }"
+								class="small-box-footer">More info <i
+								class="fa fa-arrow-circle-right"></i></a>
+							<form action="#"
+								th:action="@{'/series/page/' + ${currentIndex} + '/serie/'+${serie.id}+'/update'}"
+								th:object="${serie}" method="post"
+								class="form-horizontal form-custom ajax-form"
+								novalidate="novalidate">
+								<button type="submit" name="shown" style="margin-top: -27px;"
+									class="btn btn-info pull-right"
+									th:text="#{common.button.geguckt}">Geguckt</button>
+							</form>
+						</div>
+					</div>
+					<!-- /.box -->
+				</div>
+				<div class="col-md-12 text-center">
+					<div class="pagination pagination-centered">
+						<ul class="pagination">
+							<li th:class="${currentIndex == 1}? 'disabled' : ''"><span
+								th:if="${currentIndex == 1}">First</span> <a
+								th:if="${currentIndex != 1}" th:href="@{/movies/page/1}">First</a>
+							</li>
+							<li th:class="${currentIndex != 1}? '' : 'disabled'"><span
+								th:if="${currentIndex == 1}">&laquo;</span> <a
+								th:if="${currentIndex != 1}"
+								th:href="@{|${baseUrl}${currentIndex -1}|}"
+								title="Go to previous Page">&laquo;</a></li>
+
+							<li th:each="item: ${#numbers.sequence(beginIndex, endIndex)}"
+								th:class="${item == currentIndex ? 'active': '' } "><span
+								th:if="${item == currentIndex}" th:text="${item}">1</span> <a
+								th:if="${item != currentIndex}" th:href="@{|${baseUrl}${item}|}">
+									<span th:text="${item}">1</span>
+							</a></li>
+
+							<li th:class="${currentIndex != totalPageCount}? '' : 'disabled'"><span
+								th:if="${currentIndex == totalPageCount}">&raquo;</span> <a
+								th:if="${currentIndex != totalPageCount}"
+								th:href="@{|${baseUrl}${currentIndex + 1}|}"
+								title="Go to next Page">&raquo;</a></li>
+
+							<li th:class="${currentIndex == totalPageCount}? 'disabled' : ''"><span
+								th:if="${currentIndex == totalPageCount}">Last</span> <a
+								th:if="${currentIndex != totalPageCount}"
+								th:href="@{|${baseUrl}${totalPageCount}|}">Last</a></li>
+
+						</ul>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<div layout:fragment="decorator-page-js" th:remove="tag"></div>
+
+	<div layout:fragment="header-css-extra" th:remove="tag"></div>
+</body>
+</html>
